@@ -2,8 +2,6 @@ const questList = document.getElementById('quest-list');
 const questInput = document.getElementById('quest-input');
 const addBtn = document.getElementById('add-quest-btn');
 
-// --- 1. DATA PERSISTENCE & XP ENGINE ---
-
 function loadQuests() {
     const savedQuests = JSON.parse(localStorage.getItem('liora_quests')) || [];
     savedQuests.forEach(quest => {
@@ -49,8 +47,6 @@ function updateXP() {
         }
     }
 }
-
-// --- 2. QUEST CORE LOGIC ---
 
 function createQuest(text, isCompleted = false) {
     const li = document.createElement('li');
@@ -103,12 +99,11 @@ if(resetBtn) {
     };
 }
 
-const clearAllBtn = document.getElementById('clear-all-btn'); // Support for "CLEAR ALL" button name
+const clearAllBtn = document.getElementById('clear-all-btn');
 if(clearAllBtn) {
     clearAllBtn.onclick = () => reInitializeSystem();
 }
 
-// --- 3. HUD & JUDGMENT ENGINE ---
 
 const DEADLINE_HOUR = 22; // 10 PM
 
@@ -131,12 +126,9 @@ function updateClock() {
 function updatePenaltyTimer() {
     const now = new Date();
     
-    // Create deadline for TODAY
     let deadline = new Date();
     deadline.setHours(DEADLINE_HOUR, 0, 0, 0);
 
-    // If it's currently between 12 AM and 10 PM, show the countdown for TODAY.
-    // If it's already past 10 PM, show the countdown for TOMORROW.
     if (now > deadline) {
         deadline.setDate(deadline.getDate() + 1);
     }
@@ -151,8 +143,6 @@ function updatePenaltyTimer() {
         countdownDisplay.textContent = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
     }
 
-    // --- EVALUATION WINDOW LOGIC ---
-    // Only trigger evaluation if we are in the 10:00 PM - 11:59 PM window
     const isPenaltyWindow = now.getHours() >= DEADLINE_HOUR && now.getHours() < 24;
 
     if (isPenaltyWindow) {
@@ -161,11 +151,9 @@ function updatePenaltyTimer() {
             triggerEvaluation();
         }
     } else {
-        // Automatically hide if a new day (Midnight) has started
         closeEval();
     }
 
-    // --- DANGER MODE VISUALS ---
     const allQuests = document.querySelectorAll('.quest-item');
     const completedQuests = document.querySelectorAll('.quest-item.completed');
     const systemOverlay = document.querySelector('.system-overlay');
@@ -220,7 +208,6 @@ function reInitializeSystem() {
     closeEval();
 }
 
-// --- 4. BOOT SEQUENCE (Neural Link) ---
 
 let syncInterval;
 let syncProgress = 0;
@@ -266,23 +253,18 @@ function completeSync() {
     if(bootScreen) bootScreen.classList.add('boot-complete');
 }
 
-// Event Listeners
 if(syncTrigger) {
-    // Desktop Interaction
     syncTrigger.addEventListener('mousedown', startSync);
     
-    // Mobile Interaction - Hardened against text selection and scrolling
     syncTrigger.addEventListener('touchstart', (e) => { 
         if (e.cancelable) e.preventDefault(); 
         startSync(); 
     }, { passive: false });
 }
 
-// Global release handlers
 window.addEventListener('mouseup', stopSync);
 window.addEventListener('touchend', stopSync);
 
-// --- INITIALIZE SYSTEM ---
 setInterval(() => {
     updateClock();
     updatePenaltyTimer();

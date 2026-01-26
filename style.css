@@ -42,7 +42,6 @@ body {
     }
 }
 
-/* --- HUD HEADER REALIGNMENT --- */
 .hud-header {
     display: flex;
     justify-content: space-between;
@@ -92,7 +91,6 @@ body {
     font-weight: bold;
 }
 
-/* --- QUEST LOGIC --- */
 .quest-list {
     list-style: none;
     padding: 0;
@@ -189,7 +187,6 @@ body {
     transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* --- DANGER MODE VISUALS --- */
 @keyframes penaltyGlitch {
     0% { box-shadow: 0 0 10px rgba(255, 0, 0, 0.2); }
     50% { box-shadow: 0 0 40px rgba(255, 0, 0, 0.6); border-left-color: #ff0000; }
@@ -206,7 +203,6 @@ body {
     font-weight: bold;
 }
 
-/* --- EVALUATION & BOOT --- */
 .eval-hidden { display: none; }
 
 #evaluation-overlay {
@@ -305,7 +301,6 @@ svg { transform: rotate(-90deg); }
     visibility: hidden;
 }
 
-/* --- LOCKDOWN PROTOCOLS --- */
 #sync-trigger, 
 #boot-screen,
 .panel-title,
