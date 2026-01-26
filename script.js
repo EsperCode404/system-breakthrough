@@ -40,10 +40,13 @@ function updateXP() {
     if(label) label.textContent = percentage + "%";
 
     if (percentage === 100 && allQuests.length > 0) {
-        document.querySelector('.xp-bar-inner').style.background = "#fff";
-        setTimeout(() => {
-            document.querySelector('.xp-bar-inner').style.background = "linear-gradient(90deg, #00eeff, #0077ff)";
-        }, 500);
+        const innerBar = document.querySelector('.xp-bar-inner');
+        if(innerBar) {
+            innerBar.style.background = "#fff";
+            setTimeout(() => {
+                innerBar.style.background = "linear-gradient(90deg, #00eeff, #0077ff)";
+            }, 500);
+        }
     }
 }
 
@@ -73,27 +76,37 @@ function createQuest(text, isCompleted = false) {
     saveQuests();
 }
 
-addBtn.onclick = () => {
-    if (questInput.value.trim() !== "") {
-        createQuest(questInput.value);
-        questInput.value = "";
-    }
-};
+if(addBtn) {
+    addBtn.onclick = () => {
+        if (questInput.value.trim() !== "") {
+            createQuest(questInput.value);
+            questInput.value = "";
+        }
+    };
+}
 
-questInput.onkeypress = (e) => {
-    if (e.key === 'Enter' && questInput.value.trim() !== "") {
-        createQuest(questInput.value);
-        questInput.value = "";
-    }
-};
+if(questInput) {
+    questInput.onkeypress = (e) => {
+        if (e.key === 'Enter' && questInput.value.trim() !== "") {
+            createQuest(questInput.value);
+            questInput.value = "";
+        }
+    };
+}
 
-document.getElementById('reset-btn').onclick = () => {
-    if(confirm("PURGE ALL OBJECTIVES?")) {
-        questList.innerHTML = "";
-        localStorage.removeItem('liora_quests');
-        updateXP();
-    }
-};
+const resetBtn = document.getElementById('reset-btn');
+if(resetBtn) {
+    resetBtn.onclick = () => {
+        if(confirm("PURGE ALL OBJECTIVES?")) {
+            reInitializeSystem();
+        }
+    };
+}
+
+const clearAllBtn = document.getElementById('clear-all-btn'); // Support for "CLEAR ALL" button name
+if(clearAllBtn) {
+    clearAllBtn.onclick = () => reInitializeSystem();
+}
 
 // --- 3. HUD & JUDGMENT ENGINE ---
 
@@ -101,50 +114,68 @@ const DEADLINE_HOUR = 22; // 10 PM
 
 function updateClock() {
     const now = new Date();
-    document.getElementById('clock').textContent = now.toLocaleTimeString();
+    const clockEl = document.getElementById('clock');
+    if(clockEl) clockEl.textContent = now.toLocaleTimeString();
     
     const year = now.getFullYear();
     const month = String(now.getMonth() + 1).padStart(2, '0');
     const date = String(now.getDate()).padStart(2, '0');
-    document.getElementById('date-display').textContent = `${year}.${month}.${date}`;
+    const dateEl = document.getElementById('date-display');
+    if(dateEl) dateEl.textContent = `${year}.${month}.${date}`;
     
     const dayNames = ["SUNDAY", "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"];
-    document.getElementById('day-display').textContent = dayNames[now.getDay()];
+    const dayEl = document.getElementById('day-display');
+    if(dayEl) dayEl.textContent = dayNames[now.getDay()];
 }
 
 function updatePenaltyTimer() {
     const now = new Date();
-    const deadline = new Date();
+    
+    // Create deadline for TODAY
+    let deadline = new Date();
     deadline.setHours(DEADLINE_HOUR, 0, 0, 0);
 
+    // If it's currently between 12 AM and 10 PM, show the countdown for TODAY.
+    // If it's already past 10 PM, show the countdown for TOMORROW.
     if (now > deadline) {
         deadline.setDate(deadline.getDate() + 1);
     }
 
     const diff = deadline - now;
-    
     const h = Math.floor(diff / 3600000);
     const m = Math.floor((diff % 3600000) / 60000);
     const s = Math.floor((diff % 60000) / 1000);
 
     const countdownDisplay = document.getElementById('countdown');
-    countdownDisplay.textContent = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
-
-    // TRIGGER EVALUATION IF TIME EXPIRES (Within a 1 second window)
-    if (h === 0 && m === 0 && s === 0) {
-        triggerEvaluation();
+    if(countdownDisplay) {
+        countdownDisplay.textContent = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
     }
 
+    // --- EVALUATION WINDOW LOGIC ---
+    // Only trigger evaluation if we are in the 10:00 PM - 11:59 PM window
+    const isPenaltyWindow = now.getHours() >= DEADLINE_HOUR && now.getHours() < 24;
+
+    if (isPenaltyWindow) {
+        const overlay = document.getElementById('evaluation-overlay');
+        if (overlay && overlay.style.display !== 'flex') {
+            triggerEvaluation();
+        }
+    } else {
+        // Automatically hide if a new day (Midnight) has started
+        closeEval();
+    }
+
+    // --- DANGER MODE VISUALS ---
     const allQuests = document.querySelectorAll('.quest-item');
     const completedQuests = document.querySelectorAll('.quest-item.completed');
-    const overlay = document.querySelector('.system-overlay');
+    const systemOverlay = document.querySelector('.system-overlay');
 
-    if (h < 1 && allQuests.length !== completedQuests.length) {
-        overlay.classList.add('danger-mode');
-        countdownDisplay.classList.add('danger-text');
+    if (!isPenaltyWindow && h < 1 && allQuests.length !== completedQuests.length) {
+        if(systemOverlay) systemOverlay.classList.add('danger-mode');
+        if(countdownDisplay) countdownDisplay.classList.add('danger-text');
     } else {
-        overlay.classList.remove('danger-mode');
-        countdownDisplay.classList.remove('danger-text');
+        if(systemOverlay) systemOverlay.classList.remove('danger-mode');
+        if(countdownDisplay) countdownDisplay.classList.remove('danger-text');
     }
 }
 
@@ -157,34 +188,39 @@ function triggerEvaluation() {
     const rankDisp = document.getElementById('final-rank');
     const msgDisp = document.getElementById('eval-msg');
 
-    overlay.classList.remove('eval-hidden');
-    overlay.style.display = 'flex';
+    if(overlay) {
+        overlay.classList.remove('eval-hidden');
+        overlay.style.display = 'flex';
+    }
 
-    if (ratio === 1) {
-        rankDisp.textContent = "S";
-        msgDisp.textContent = "PERFECT ASCENSION. THE SYSTEM IS SATISFIED.";
+    if (ratio === 1 && all > 0) {
+        if(rankDisp) rankDisp.textContent = "S";
+        if(msgDisp) msgDisp.textContent = "PERFECT ASCENSION. THE SYSTEM IS SATISFIED.";
     } else if (ratio >= 0.8) {
-        rankDisp.textContent = "A";
-        msgDisp.textContent = "EXCELLENT WORK. YOU ARE EVOLVING.";
+        if(rankDisp) rankDisp.textContent = "A";
+        if(msgDisp) msgDisp.textContent = "EXCELLENT WORK. YOU ARE EVOLVING.";
     } else {
-        rankDisp.textContent = "E";
-        rankDisp.style.color = "#ff0000";
-        msgDisp.textContent = "INSUFFICIENT GROWTH. PENALTY IMMINENT.";
+        if(rankDisp) {
+            rankDisp.textContent = "E";
+            rankDisp.style.color = "#ff0000";
+        }
+        if(msgDisp) msgDisp.textContent = "INSUFFICIENT GROWTH. PENALTY IMMINENT.";
     }
 }
 
 function closeEval() {
-    document.getElementById('evaluation-overlay').style.display = 'none';
+    const overlay = document.getElementById('evaluation-overlay');
+    if(overlay) overlay.style.display = 'none';
 }
 
-// --- INITIALIZE SYSTEM ---
-setInterval(() => {
-    updateClock();
-    updatePenaltyTimer();
-}, 1000);
+function reInitializeSystem() {
+    questList.innerHTML = "";
+    localStorage.removeItem('liora_quests');
+    updateXP();
+    closeEval();
+}
 
-updateClock();
-loadQuests();
+// --- 4. BOOT SEQUENCE (Neural Link) ---
 
 let syncInterval;
 let syncProgress = 0;
@@ -196,28 +232,29 @@ const bootScreen = document.getElementById('boot-screen');
 function startSync() {
     syncInterval = setInterval(() => {
         if (syncProgress < 100) {
-            syncProgress += 2; // Adjust speed here
+            syncProgress += 2; 
             updateSyncUI();
         } else {
             completeSync();
         }
-    }, 50); // Speed of the loop
+    }, 50);
 }
 
 function stopSync() {
     clearInterval(syncInterval);
     if (syncProgress < 100) {
-        syncProgress = 0; // Reset if let go early
+        syncProgress = 0; 
         updateSyncUI();
     }
 }
 
 function updateSyncUI() {
-    const offset = 283 - (syncProgress / 100) * 283;
-    progressRing.style.strokeDashoffset = offset;
-    syncValue.textContent = syncProgress;
+    if(progressRing) {
+        const offset = 283 - (syncProgress / 100) * 283;
+        progressRing.style.strokeDashoffset = offset;
+    }
+    if(syncValue) syncValue.textContent = syncProgress;
     
-    // Haptic Feedback for phones
     if (syncProgress % 10 === 0 && window.navigator.vibrate) {
         window.navigator.vibrate(5);
     }
@@ -226,12 +263,23 @@ function updateSyncUI() {
 function completeSync() {
     clearInterval(syncInterval);
     if (window.navigator.vibrate) window.navigator.vibrate([50, 30, 50]);
-    bootScreen.classList.add('boot-complete');
+    if(bootScreen) bootScreen.classList.add('boot-complete');
 }
 
-// Mobile and Desktop Events
-syncTrigger.addEventListener('mousedown', startSync);
-syncTrigger.addEventListener('touchstart', (e) => { e.preventDefault(); startSync(); });
+// Event Listeners
+if(syncTrigger) {
+    syncTrigger.addEventListener('mousedown', startSync);
+    syncTrigger.addEventListener('touchstart', (e) => { e.preventDefault(); startSync(); });
+}
 
 window.addEventListener('mouseup', stopSync);
 window.addEventListener('touchend', stopSync);
+
+// --- INITIALIZE SYSTEM ---
+setInterval(() => {
+    updateClock();
+    updatePenaltyTimer();
+}, 1000);
+
+updateClock();
+loadQuests();
