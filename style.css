@@ -148,3 +148,29 @@ body {
     box-shadow: 0 0 15px #00eeff;
     transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
+
+.penalty-timer-zone {
+    text-align: center;
+    font-size: 0.6rem;
+    color: #ff4444; /* Red for danger */
+    margin-bottom: 10px;
+    letter-spacing: 2px;
+    text-shadow: 0 0 5px #ff4444;
+}
+
+/* The "Danger" Animation */
+@keyframes penaltyGlitch {
+    0% { box-shadow: 0 0 10px rgba(255, 0, 0, 0.2); }
+    50% { box-shadow: 0 0 40px rgba(255, 0, 0, 0.6); border-left-color: #ff0000; }
+    100% { box-shadow: 0 0 10px rgba(255, 0, 0, 0.2); }
+}
+
+.system-overlay.danger-mode {
+    animation: penaltyGlitch 1s infinite;
+    border-left-color: #ff0000 !important;
+}
+
+.danger-text {
+    color: #ff0000 !important;
+    font-weight: bold;
+}
