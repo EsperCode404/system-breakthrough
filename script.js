@@ -2,17 +2,16 @@ const questList = document.getElementById('quest-list');
 const questInput = document.getElementById('quest-input');
 const addBtn = document.getElementById('add-quest-btn');
 
-// --- 1. DATA PERSISTENCE (The "Save" System) ---
+// --- 1. DATA PERSISTENCE & XP ENGINE ---
 
-// Load quests from memory when the page starts
 function loadQuests() {
     const savedQuests = JSON.parse(localStorage.getItem('liora_quests')) || [];
     savedQuests.forEach(quest => {
         createQuest(quest.text, quest.completed);
     });
+    updateXP();
 }
 
-// Save current list to memory
 function saveQuests() {
     const quests = [];
     document.querySelectorAll('.quest-item').forEach(li => {
@@ -22,7 +21,9 @@ function saveQuests() {
         });
     });
     localStorage.setItem('liora_quests', JSON.stringify(quests));
+    updateXP();
 }
+
 function updateXP() {
     const allQuests = document.querySelectorAll('.quest-item');
     const completedQuests = document.querySelectorAll('.quest-item.completed');
@@ -35,29 +36,15 @@ function updateXP() {
     const bar = document.getElementById('xp-bar-inner');
     const label = document.getElementById('xp-percent');
 
-    bar.style.width = percentage + "%";
-    label.textContent = percentage + "%";
+    if(bar) bar.style.width = percentage + "%";
+    if(label) label.textContent = percentage + "%";
 
-    // Play a "Level Up" sound or flash if 100%
     if (percentage === 100 && allQuests.length > 0) {
         document.querySelector('.xp-bar-inner').style.background = "#fff";
         setTimeout(() => {
             document.querySelector('.xp-bar-inner').style.background = "linear-gradient(90deg, #00eeff, #0077ff)";
         }, 500);
     }
-}
-
-// CRITICAL: Inside your existing saveQuests() function, 
-// add a call to updateXP() at the very end:
-function saveQuests() {
-    // ... your existing save logic ...
-    updateXP(); 
-}
-
-// Also call it at the end of loadQuests() so it shows progress on boot
-function loadQuests() {
-    // ... your existing load logic ...
-    updateXP();
 }
 
 // --- 2. QUEST CORE LOGIC ---
@@ -78,8 +65,7 @@ function createQuest(text, isCompleted = false) {
     li.onclick = () => {
         li.classList.toggle('completed');
         updateDisplay();
-        saveQuests(); // Save state when clicked
-        
+        saveQuests();
         if (window.navigator.vibrate) window.navigator.vibrate(10);
     };
     
@@ -87,7 +73,6 @@ function createQuest(text, isCompleted = false) {
     saveQuests();
 }
 
-// Add Quest via Button or Enter
 addBtn.onclick = () => {
     if (questInput.value.trim() !== "") {
         createQuest(questInput.value);
@@ -102,15 +87,17 @@ questInput.onkeypress = (e) => {
     }
 };
 
-// Clear All
 document.getElementById('reset-btn').onclick = () => {
     if(confirm("PURGE ALL OBJECTIVES?")) {
         questList.innerHTML = "";
         localStorage.removeItem('liora_quests');
+        updateXP();
     }
 };
 
-// --- 3. SYSTEM HUD (Clock & Date) ---
+// --- 3. HUD & JUDGMENT ENGINE ---
+
+const DEADLINE_HOUR = 22; // 10 PM
 
 function updateClock() {
     const now = new Date();
@@ -125,21 +112,17 @@ function updateClock() {
     document.getElementById('day-display').textContent = dayNames[now.getDay()];
 }
 
-const DEADLINE_HOUR = 22; // Set this to the hour you want (22 = 10 PM)
-
 function updatePenaltyTimer() {
     const now = new Date();
     const deadline = new Date();
     deadline.setHours(DEADLINE_HOUR, 0, 0, 0);
 
-    // If it's already past the deadline, set for tomorrow
     if (now > deadline) {
         deadline.setDate(deadline.getDate() + 1);
     }
 
     const diff = deadline - now;
     
-    // Convert to HH:MM:SS
     const h = Math.floor(diff / 3600000);
     const m = Math.floor((diff % 3600000) / 60000);
     const s = Math.floor((diff % 60000) / 1000);
@@ -147,12 +130,15 @@ function updatePenaltyTimer() {
     const countdownDisplay = document.getElementById('countdown');
     countdownDisplay.textContent = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
 
-    // CHECK FOR FAIL STATE
+    // TRIGGER EVALUATION IF TIME EXPIRES (Within a 1 second window)
+    if (h === 0 && m === 0 && s === 0) {
+        triggerEvaluation();
+    }
+
     const allQuests = document.querySelectorAll('.quest-item');
     const completedQuests = document.querySelectorAll('.quest-item.completed');
     const overlay = document.querySelector('.system-overlay');
 
-    // If less than 1 hour remains and quests aren't done -> DANGER MODE
     if (h < 1 && allQuests.length !== completedQuests.length) {
         overlay.classList.add('danger-mode');
         countdownDisplay.classList.add('danger-text');
@@ -162,11 +148,40 @@ function updatePenaltyTimer() {
     }
 }
 
+function triggerEvaluation() {
+    const all = document.querySelectorAll('.quest-item').length;
+    const completed = document.querySelectorAll('.quest-item.completed').length;
+    const ratio = all > 0 ? (completed / all) : 0;
+    
+    const overlay = document.getElementById('evaluation-overlay');
+    const rankDisp = document.getElementById('final-rank');
+    const msgDisp = document.getElementById('eval-msg');
+
+    overlay.classList.remove('eval-hidden');
+    overlay.style.display = 'flex';
+
+    if (ratio === 1) {
+        rankDisp.textContent = "S";
+        msgDisp.textContent = "PERFECT ASCENSION. THE SYSTEM IS SATISFIED.";
+    } else if (ratio >= 0.8) {
+        rankDisp.textContent = "A";
+        msgDisp.textContent = "EXCELLENT WORK. YOU ARE EVOLVING.";
+    } else {
+        rankDisp.textContent = "E";
+        rankDisp.style.color = "#ff0000";
+        msgDisp.textContent = "INSUFFICIENT GROWTH. PENALTY IMMINENT.";
+    }
+}
+
+function closeEval() {
+    document.getElementById('evaluation-overlay').style.display = 'none';
+}
+
 // --- INITIALIZE SYSTEM ---
-setInterval(updateClock, 1000);
-updateClock();
-loadQuests(); // Boot up saved data
 setInterval(() => {
     updateClock();
-    updatePenaltyTimer(); // Sync the countdown
+    updatePenaltyTimer();
 }, 1000);
+
+updateClock();
+loadQuests();
