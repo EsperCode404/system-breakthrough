@@ -1,7 +1,10 @@
 🌐 QUEST SYSTEM: BREAKTHROUGH (v1.7)
 Status: Operational | Identity: Neko | User: Player
-![System HUD Main](screenshots/image_f44b75.png)
+![System HUD Main](screenshots/sync_screen.png)
 
+![System HUD Main](screenshots/hud_main.png)
+![System HUD Main](screenshots/hud_main1.png)
+![System HUD Main](screenshots/hud_main2.png)
 "Discipline is the bridge between goals and accomplishment. This System is the architect of that bridge."
 
 🧬 Project Overview
