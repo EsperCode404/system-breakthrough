@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QUEST SYSTEM v1.7</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="system-overlay">
+        <div class="hud-header">
+            <div class="day-info">
+                <span id="date-display"></span>
+                <span id="day-display"></span>
+            </div>
+            <div class="time-info" id="clock">00:00:00 AM</div>
+        </div>
+
+        <div class="quest-panel">
+            <div class="panel-title">DAILY QUEST: BREAKTHROUGH</div>
+            <div class="xp-container">
+    <div class="xp-label">LEVEL PROGRESS: <span id="xp-percent">0%</span></div>
+    <div class="xp-bar-outer">
+        <div id="xp-bar-inner" class="xp-bar-inner"></div>
+    </div>
+</div>
+            <div class="quest-input-wrapper">
+                <input type="text" id="quest-input" placeholder="ENTER NEW OBJECTIVE..." maxlength="30">
+                <button id="add-quest-btn" class="system-btn">+</button>
+            </div>
+
+            <ul class="quest-list" id="quest-list"></ul>
+
+            <div class="panel-footer">
+                <button id="reset-btn" class="system-btn">CLEAR ALL</button>
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

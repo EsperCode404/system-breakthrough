@@ -1,0 +1,150 @@
+:root {
+    --system-blue: rgba(0, 238, 255, 0.8);
+    --panel-bg: rgba(0, 20, 40, 0.7);
+}
+
+body {
+    background: #050505;
+    color: white;
+    font-family: 'Orbitron', sans-serif;
+    margin: 0;
+    padding: 20px;
+    /* CENTERING LOGIC */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    box-sizing: border-box;
+}
+
+.system-overlay {
+    width: 100%;
+    max-width: 450px;
+    background: var(--panel-bg);
+    backdrop-filter: blur(15px);
+    border-left: 4px solid var(--system-blue);
+    padding: 20px;
+    box-shadow: 0 0 30px rgba(0, 238, 255, 0.15);
+    animation: systemSpawn 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+@keyframes systemSpawn {
+    from { opacity: 0; transform: scale(0.9) translateY(20px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+/* MOBILE FIX: Added missing closing brace here */
+@media (max-width: 480px) {
+    .system-overlay {
+        padding: 15px;
+        max-width: 95%;
+    }
+    .panel-title {
+        font-size: 0.8rem;
+    }
+}
+
+.hud-header {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.7rem;
+    border-bottom: 1px solid var(--system-blue);
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+}
+
+.quest-list {
+    list-style: none;
+    padding: 0;
+}
+
+.quest-item {
+    margin: 10px 0;
+    padding: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: 0.3s;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    animation: slideIn 0.3s ease-out;
+}
+
+.quest-item:hover {
+    background: rgba(0, 238, 255, 0.1);
+    border-color: var(--system-blue);
+    transform: translateX(-5px);
+}
+
+.quest-item.completed {
+    text-decoration: line-through;
+    opacity: 0.4;
+    border-color: #555;
+}
+
+.system-btn {
+    background: transparent;
+    border: 1px solid var(--system-blue);
+    color: var(--system-blue);
+    padding: 5px 10px;
+    cursor: pointer;
+    font-size: 0.6rem;
+    font-family: 'Orbitron', sans-serif;
+}
+
+.system-btn:hover {
+    background: var(--system-blue);
+    color: black;
+}
+
+.quest-input-wrapper {
+    display: flex;
+    gap: 5px;
+    margin-bottom: 15px;
+    border-bottom: 1px solid rgba(0, 238, 255, 0.3);
+}
+
+#quest-input {
+    background: transparent;
+    border: none;
+    color: white;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.7rem;
+    padding: 5px;
+    flex-grow: 1;
+    outline: none;
+}
+
+@keyframes slideIn {
+    from { opacity: 0; transform: translateX(10px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+.xp-container {
+    margin-top: 20px;
+    padding: 10px 0;
+    border-top: 1px dashed rgba(0, 238, 255, 0.2);
+}
+
+.xp-label {
+    font-size: 0.6rem;
+    color: var(--system-blue);
+    margin-bottom: 5px;
+    letter-spacing: 1px;
+}
+
+.xp-bar-outer {
+    width: 100%;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(0, 238, 255, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+.xp-bar-inner {
+    width: 0%; /* Controlled by JS */
+    height: 100%;
+    background: linear-gradient(90deg, #00eeff, #0077ff);
+    box-shadow: 0 0 15px #00eeff;
+    transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
