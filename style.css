@@ -9,7 +9,6 @@ body {
     font-family: 'Orbitron', sans-serif;
     margin: 0;
     padding: 20px;
-    /* CENTERING LOGIC */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -33,7 +32,6 @@ body {
     to { opacity: 1; transform: scale(1) translateY(0); }
 }
 
-/* MOBILE FIX: Added missing closing brace here */
 @media (max-width: 480px) {
     .system-overlay {
         padding: 15px;
@@ -44,15 +42,57 @@ body {
     }
 }
 
+/* --- HUD HEADER REALIGNMENT --- */
 .hud-header {
     display: flex;
     justify-content: space-between;
+    align-items: flex-start;
     font-size: 0.7rem;
     border-bottom: 1px solid var(--system-blue);
     padding-bottom: 10px;
     margin-bottom: 15px;
 }
 
+.day-info-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.day-info {
+    display: flex;
+    gap: 8px;
+    color: #eee;
+}
+
+.time-info {
+    color: var(--system-blue);
+    opacity: 0.8;
+}
+
+.penalty-timer-zone {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    text-align: right;
+    min-width: fit-content;
+}
+
+.penalty-label {
+    font-size: 0.6rem;
+    color: #ff4444;
+    letter-spacing: 1px;
+    margin-bottom: 2px;
+}
+
+#countdown {
+    font-size: 0.85rem;
+    color: #ff4444;
+    text-shadow: 0 0 5px #ff4444;
+    font-weight: bold;
+}
+
+/* --- QUEST LOGIC --- */
 .quest-list {
     list-style: none;
     padding: 0;
@@ -142,23 +182,14 @@ body {
 }
 
 .xp-bar-inner {
-    width: 0%; /* Controlled by JS */
+    width: 0%;
     height: 100%;
     background: linear-gradient(90deg, #00eeff, #0077ff);
     box-shadow: 0 0 15px #00eeff;
     transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.penalty-timer-zone {
-    text-align: center;
-    font-size: 0.6rem;
-    color: #ff4444; /* Red for danger */
-    margin-bottom: 10px;
-    letter-spacing: 2px;
-    text-shadow: 0 0 5px #ff4444;
-}
-
-/* The "Danger" Animation */
+/* --- DANGER MODE VISUALS --- */
 @keyframes penaltyGlitch {
     0% { box-shadow: 0 0 10px rgba(255, 0, 0, 0.2); }
     50% { box-shadow: 0 0 40px rgba(255, 0, 0, 0.6); border-left-color: #ff0000; }
@@ -175,6 +206,7 @@ body {
     font-weight: bold;
 }
 
+/* --- EVALUATION & BOOT --- */
 .eval-hidden { display: none; }
 
 #evaluation-overlay {
@@ -227,9 +259,7 @@ body {
     margin: 0 auto 20px;
 }
 
-svg {
-    transform: rotate(-90deg);
-}
+svg { transform: rotate(-90deg); }
 
 .bg-ring {
     fill: none;
@@ -241,8 +271,8 @@ svg {
     fill: none;
     stroke: var(--system-blue);
     stroke-width: 4;
-    stroke-dasharray: 283; /* Circumference of circle (2 * PI * 45) */
-    stroke-dashoffset: 283; /* Start empty */
+    stroke-dasharray: 283;
+    stroke-dashoffset: 283;
     transition: stroke-dashoffset 0.1s linear;
 }
 
@@ -270,30 +300,23 @@ svg {
     color: #fff;
 }
 
-/* Class to hide boot screen */
 .boot-complete {
     opacity: 0;
     visibility: hidden;
 }
 
-/* --- PREVENT TEXT SELECTION DURING INTERACTION --- */
+/* --- LOCKDOWN PROTOCOLS --- */
 #sync-trigger, 
 #boot-screen,
 .panel-title,
 #sync-value {
-    -webkit-user-select: none;  /* Safari/Chrome/iOS */
-    -moz-user-select: none;     /* Firefox */
-    -ms-user-select: none;      /* IE/Edge */
-    user-select: none;          /* Standard */
-    
-    /* Disable the 'magnifying glass' and callouts on mobile */
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
     -webkit-touch-callout: none; 
 }
 
-/* Specifically for the sync ring area to prevent tap-highlight-color */
 #sync-trigger {
-    -webkit-user-select: none;
-    user-select: none;
-    -webkit-touch-callout: none;
     -webkit-tap-highlight-color: transparent;
 }

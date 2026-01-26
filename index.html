@@ -9,45 +9,48 @@
 </head>
 <body>
     <div id="boot-screen">
-    <div class="sync-container">
-        <div class="sync-ring">
-            <svg viewBox="0 0 100 100">
-                <circle cx="50" cy="50" r="45" class="bg-ring"></circle>
-                <circle cx="50" cy="50" r="45" id="sync-progress" class="progress-ring"></circle>
-            </svg>
-            <div class="fingerprint" id="sync-trigger">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                    <path d="M12 11c0 3.517-2.162 6.529-5.227 7.757M12 11c0-3.517 2.162-6.529 5.227-7.757M12 11V5M12 11v6M12 11c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4z" stroke-linecap="round"></path>
-                    <path d="M19 11c0 3.866-3.134 7-7 7s-7-3.134-7-7 3.134-7 7-7 7 3.134 7 7z" stroke-linecap="round"></path>
+        <div class="sync-container">
+            <div class="sync-ring">
+                <svg viewBox="0 0 100 100">
+                    <circle cx="50" cy="50" r="45" class="bg-ring"></circle>
+                    <circle cx="50" cy="50" r="45" id="sync-progress" class="progress-ring"></circle>
                 </svg>
+                <div class="fingerprint" id="sync-trigger">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M12 11c0 3.517-2.162 6.529-5.227 7.757M12 11c0-3.517 2.162-6.529 5.227-7.757M12 11V5M12 11v6M12 11c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4z" stroke-linecap="round"></path>
+                        <path d="M19 11c0 3.866-3.134 7-7 7s-7-3.134-7-7 3.134-7 7-7 7 3.134 7 7z" stroke-linecap="round"></path>
+                    </svg>
+                </div>
             </div>
+            <div class="sync-text">HOLD TO SYNC NEURAL LINK</div>
+            <div class="sync-status">SYNC: <span id="sync-value">0</span>%</div>
         </div>
-        <div class="sync-text">HOLD TO SYNC NEURAL LINK</div>
-        <div class="sync-status">SYNC: <span id="sync-value">0</span>%</div>
     </div>
-</div>
 
     <div class="system-overlay">
         <div class="hud-header">
-            <div class="penalty-timer-zone">
-    <span class="penalty-label">TIME UNTIL PENALTY:</span>
-    <span id="countdown">--:--:--</span>
-</div>
-            <div class="day-info">
-                <span id="date-display"></span>
-                <span id="day-display"></span>
+            <div class="day-info-wrapper">
+                <div class="day-info">
+                    <span id="date-display"></span>
+                    <span id="day-display"></span>
+                </div>
+                <div class="time-info" id="clock">00:00:00 AM</div>
             </div>
-            <div class="time-info" id="clock">00:00:00 AM</div>
+
+            <div class="penalty-timer-zone">
+                <span class="penalty-label">TIME UNTIL PENALTY</span>
+                <span id="countdown">--:--:--</span>
+            </div>
         </div>
 
         <div class="quest-panel">
             <div class="panel-title">DAILY QUEST: BREAKTHROUGH</div>
             <div class="xp-container">
-    <div class="xp-label">LEVEL PROGRESS: <span id="xp-percent">0%</span></div>
-    <div class="xp-bar-outer">
-        <div id="xp-bar-inner" class="xp-bar-inner"></div>
-    </div>
-</div>
+                <div class="xp-label">LEVEL PROGRESS: <span id="xp-percent">0%</span></div>
+                <div class="xp-bar-outer">
+                    <div id="xp-bar-inner" class="xp-bar-inner"></div>
+                </div>
+            </div>
             <div class="quest-input-wrapper">
                 <input type="text" id="quest-input" placeholder="ENTER NEW OBJECTIVE..." maxlength="30">
                 <button id="add-quest-btn" class="system-btn">+</button>
@@ -60,14 +63,16 @@
             </div>
         </div>
     </div>
+    
     <script src="script.js"></script>
+
     <div id="evaluation-overlay" class="eval-hidden">
-    <div class="eval-content">
-        <h1 id="eval-title">DAILY EVALUATION</h1>
-        <div id="final-rank">S</div>
-        <p id="eval-msg">YOU HAVE SURPASSED THE LIMITS.</p>
-        <button onclick="closeEval()" class="system-btn">RE-INITIALIZE</button>
+        <div class="eval-content">
+            <h1 id="eval-title">DAILY EVALUATION</h1>
+            <div id="final-rank">S</div>
+            <p id="eval-msg">YOU HAVE SURPASSED THE LIMITS.</p>
+            <button onclick="closeEval()" class="system-btn">RE-INITIALIZE</button>
+        </div>
     </div>
-</div>
 </body>
 </html>
