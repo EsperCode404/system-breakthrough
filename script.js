@@ -185,3 +185,53 @@ setInterval(() => {
 
 updateClock();
 loadQuests();
+
+let syncInterval;
+let syncProgress = 0;
+const syncTrigger = document.getElementById('sync-trigger');
+const progressRing = document.getElementById('sync-progress');
+const syncValue = document.getElementById('sync-value');
+const bootScreen = document.getElementById('boot-screen');
+
+function startSync() {
+    syncInterval = setInterval(() => {
+        if (syncProgress < 100) {
+            syncProgress += 2; // Adjust speed here
+            updateSyncUI();
+        } else {
+            completeSync();
+        }
+    }, 50); // Speed of the loop
+}
+
+function stopSync() {
+    clearInterval(syncInterval);
+    if (syncProgress < 100) {
+        syncProgress = 0; // Reset if let go early
+        updateSyncUI();
+    }
+}
+
+function updateSyncUI() {
+    const offset = 283 - (syncProgress / 100) * 283;
+    progressRing.style.strokeDashoffset = offset;
+    syncValue.textContent = syncProgress;
+    
+    // Haptic Feedback for phones
+    if (syncProgress % 10 === 0 && window.navigator.vibrate) {
+        window.navigator.vibrate(5);
+    }
+}
+
+function completeSync() {
+    clearInterval(syncInterval);
+    if (window.navigator.vibrate) window.navigator.vibrate([50, 30, 50]);
+    bootScreen.classList.add('boot-complete');
+}
+
+// Mobile and Desktop Events
+syncTrigger.addEventListener('mousedown', startSync);
+syncTrigger.addEventListener('touchstart', (e) => { e.preventDefault(); startSync(); });
+
+window.addEventListener('mouseup', stopSync);
+window.addEventListener('touchend', stopSync);

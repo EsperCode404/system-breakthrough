@@ -203,3 +203,75 @@ body {
     text-shadow: 0 0 30px var(--system-blue);
     margin: 20px 0;
 }
+
+#boot-screen {
+    position: fixed;
+    inset: 0;
+    background: #000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+    transition: opacity 0.8s ease, visibility 0.8s;
+}
+
+.sync-container {
+    text-align: center;
+    font-family: 'Orbitron', sans-serif;
+}
+
+.sync-ring {
+    position: relative;
+    width: 150px;
+    height: 150px;
+    margin: 0 auto 20px;
+}
+
+svg {
+    transform: rotate(-90deg);
+}
+
+.bg-ring {
+    fill: none;
+    stroke: rgba(0, 238, 255, 0.1);
+    stroke-width: 4;
+}
+
+.progress-ring {
+    fill: none;
+    stroke: var(--system-blue);
+    stroke-width: 4;
+    stroke-dasharray: 283; /* Circumference of circle (2 * PI * 45) */
+    stroke-dashoffset: 283; /* Start empty */
+    transition: stroke-dashoffset 0.1s linear;
+}
+
+.fingerprint {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 60px;
+    color: var(--system-blue);
+    cursor: pointer;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.sync-text {
+    font-size: 0.7rem;
+    letter-spacing: 2px;
+    color: var(--system-blue);
+    opacity: 0.6;
+}
+
+.sync-status {
+    font-size: 0.6rem;
+    margin-top: 5px;
+    color: #fff;
+}
+
+/* Class to hide boot screen */
+.boot-complete {
+    opacity: 0;
+    visibility: hidden;
+}
