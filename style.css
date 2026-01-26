@@ -275,3 +275,25 @@ svg {
     opacity: 0;
     visibility: hidden;
 }
+
+/* --- PREVENT TEXT SELECTION DURING INTERACTION --- */
+#sync-trigger, 
+#boot-screen,
+.panel-title,
+#sync-value {
+    -webkit-user-select: none;  /* Safari/Chrome/iOS */
+    -moz-user-select: none;     /* Firefox */
+    -ms-user-select: none;      /* IE/Edge */
+    user-select: none;          /* Standard */
+    
+    /* Disable the 'magnifying glass' and callouts on mobile */
+    -webkit-touch-callout: none; 
+}
+
+/* Specifically for the sync ring area to prevent tap-highlight-color */
+#sync-trigger {
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
+    -webkit-tap-highlight-color: transparent;
+}

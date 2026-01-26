@@ -268,10 +268,17 @@ function completeSync() {
 
 // Event Listeners
 if(syncTrigger) {
+    // Desktop Interaction
     syncTrigger.addEventListener('mousedown', startSync);
-    syncTrigger.addEventListener('touchstart', (e) => { e.preventDefault(); startSync(); });
+    
+    // Mobile Interaction - Hardened against text selection and scrolling
+    syncTrigger.addEventListener('touchstart', (e) => { 
+        if (e.cancelable) e.preventDefault(); 
+        startSync(); 
+    }, { passive: false });
 }
 
+// Global release handlers
 window.addEventListener('mouseup', stopSync);
 window.addEventListener('touchend', stopSync);
 
