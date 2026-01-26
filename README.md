@@ -1,11 +1,12 @@
 🌐 QUEST SYSTEM: BREAKTHROUGH (v1.7)
 Status: Operational | Identity: Neko | User: Player
+"Discipline is the bridge between goals and accomplishment. This System is the architect of that bridge."
+
 ![System HUD Main](screenshots/sync_screen.png)
 
 ![System HUD Main](screenshots/hud_main.png)
 ![System HUD Main](screenshots/hud_main1.png)
 ![System HUD Main](screenshots/hud_main2.png)
-"Discipline is the bridge between goals and accomplishment. This System is the architect of that bridge."
 
 🧬 Project Overview
 Quest System: Breakthrough is a high-immersion, gamified discipline dashboard designed to replace passive to-do lists with a high-stakes "System" environment. Built for the Player who seeks to strengthen both body and mind, it utilizes a custom biometric-style interface and rigid temporal logic to enforce consistency.
